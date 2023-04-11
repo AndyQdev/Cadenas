@@ -1,0 +1,539 @@
+unit UCcadenas;
+
+interface
+uses SysUtils;
+const  MaxC = 1024; Separador =[' ',';','.'];
+Type
+ Cadenas = class
+   private
+         longitud : word;
+         caracteres : array [1..MaxC] of char;
+   public
+         Procedure AddCadena(s:string);
+         Procedure AddCaracter(c: char);
+         Procedure InserChar(c: char; p: byte);
+         Procedure InvCadena;
+         Procedure DelChar(p: byte);
+         procedure Modchar(p: word; c: char);
+         procedure UpperCase;
+         procedure lowerCase;
+         Procedure InsertStr(p: word; s: string);
+         Procedure DeleteStr(p, n: word);
+         procedure ModStr(p: word; palabra: string);
+         procedure OrdenAlfabetico;
+         Procedure SaltarEspacios(var i: word);
+         Procedure MoverPalabra(p1, p2: word);
+         procedure EliminarPalabra(palabra: string);
+         procedure ConvPosChar(var i: word); //Convierte la poscion de palabra a caracteres
+         procedure ConvPosStr(var i: word); //Convierte la poscion de caracteres a palabras
+         Procedure MoverPalabra2(p1, p2: word);
+         Procedure OrdenStrAlfabetico;
+         procedure QuedarseConNcadenas(c: char); //solo toma las palabras que tengan el caracter c en ella
+         procedure InvertirCadena;
+         procedure InvertirPalabra(var s: string);
+         Function DeletePuntos(s: string):string;
+         Function DevolverHoraMayor(H: string): string;
+         Function LengLongitud: word;
+         Function GetStr: string;
+         Function CountPalabras: byte;
+         Function PalabraMayor: string;
+         Function NextPalabra(var i: word): string;
+         Function CharAlfabetico(var palabra: string): char;
+         Function ExisteChar(c: char; p: string): boolean;
+         Function BuscarSubCadena(palabra, subPal: string): boolean; //Busca sub cadena en palabra
+         Function ContarSubCadenas(subCad: string): word;
+         Function SimbIntT(c: char): byte;
+         function IntTsimb(i: byte): char;
+         Function SumaBase(s1,s2: string; base: byte): string;
+         Function SumaNveces(base: byte): string;
+         Function SumaReales(NumDecimal: byte): string;
+         Function NextCadena(var i: word; s:string): string;
+         Function ExisteSubCadena(s, subCad: string): boolean;
+ end;
+implementation
+
+{ Cadenas }
+
+procedure Cadenas.AddCadena(s: string);
+var i: word;
+begin
+ longitud:= Length(s);
+  for i := 1 to longitud do
+      caracteres[i]:= s[i];
+end;
+
+procedure Cadenas.AddCaracter(c: char);
+begin
+ inc(longitud);
+ caracteres[longitud]:= c;
+end;
+
+function Cadenas.BuscarSubCadena(palabra,subPal: string): boolean;
+var
+   i: word; pal: string; salir: boolean;
+begin
+  salir:=false; i:=1;
+  while (i<length(palabra))and(salir=false) do
+  Begin
+    pal:= NextCadena(i,palabra);
+    salir:=ExistesubCadena(pal,subpal);
+  end;
+ result:= salir;
+end;
+
+function Cadenas.CharAlfabetico(var palabra: string): char;
+var
+   p,i:byte;
+   c: char;
+begin
+ i:=1; c:='z';
+  for I := 1 to Length(palabra) do
+      if palabra[i] <= c then begin
+         c:= palabra[i]; p:=i;
+      end;
+ delete(palabra,p,1);
+ result:= c;
+end;
+
+function Cadenas.CountPalabras: byte;
+var
+    i: word; c: byte;
+begin
+ i:= 1; c:=0;
+   while I < longitud do begin
+      if (not (caracteres[i] in Separador)) and (caracteres[i+1] in separador) then
+         inc(c);
+     inc(i);
+   end;
+   if not (caracteres[i] in separador) then
+      inc(c);
+ result:= c;
+end;
+
+procedure Cadenas.DelChar(p: byte);
+var
+   i: word;
+begin
+ i:=1;
+ if (p>0)and(p<=longitud) then begin
+   for I := p to longitud do
+       caracteres[i]:= caracteres[i+1];
+  Dec(longitud);
+ end ELse raise Exception.Create('Posicion invalida');
+end;
+
+function Cadenas.DeletePuntos(s: string): string;
+var i: word;
+begin
+ for I := 1 to length(s) do
+     if S[i]=':' then
+        delete(s,i,1);
+ result:=s;
+end;
+
+procedure Cadenas.DeleteStr(p, n: word);
+var
+   i: word;
+begin
+ if p>0 then begin
+   for i := p to longitud do
+      caracteres[i]:= caracteres[i+n];
+  longitud:= longitud - n;
+ end Else raise Exception.Create('Posicion invalida');
+end;
+
+function Cadenas.DevolverHoraMayor(H: string): string;
+var  k,i,j: word; HoraconP,HoraSinP,horaConPaux: string; horaMayor: cardinal; bandera:boolean;
+begin
+ i:=1; bandera:= true;
+ while i<=length(H) do begin
+   HoraConP:=NextCadena(i,H);
+   horaSinP:=DeletePuntos(HoraConP);
+   if Bandera then begin
+      HoraMayor:=strToint(horaSinP); bandera:=false;
+   end;
+   if strToint(horaSinP)<=horamayor then begin
+      horamayor:=strToint(HoraSinP); HoraConPaux:=HoraConP;
+   end;
+ end;
+ result:= HoraconPaux;
+end;
+
+procedure Cadenas.EliminarPalabra(palabra: string);
+var i: word; s: string;
+begin
+ i:= 1;
+   while i<=longitud do begin
+     s:= NextPalabra(i);
+        if s = palabra then
+           deleteStr(i-length(s), length(s));
+   end;
+end;
+
+function Cadenas.ExisteChar(c: char; p: string): boolean;
+var
+   i: byte; b: boolean;
+begin
+ b:=false;
+ for I := 1 to length(p) do
+    if p[i]=c then
+       b:= true;
+ result:= b;
+end;
+
+function Cadenas.ExisteSubCadena(s, subCad: string): boolean;
+var k,i,t: word; str: string; b: boolean;
+begin
+ b:= false; str:=''; t:=1;
+  for i := 1 to length(s) do
+    if s[i]=subcad[1] then begin
+         for k := 1 to length(subcad) do begin
+             str:= str+s[t]; inc(t);
+         end;
+         if str = subCad then begin
+            b:= true; break
+         end;
+    end;
+ result:=b;
+end;
+
+function Cadenas.GetStr: string;
+var
+    i: word; s: string;
+begin
+ s:='';
+   for i := 1 to longitud do
+      s:= s+caracteres[i];
+ result:= s;
+end;
+
+function Cadenas.ContarSubCadenas(subCad: string): word;
+var
+   i, c, k, t: word; s: string;
+begin
+ i:= 1; c:=0;
+ while i<= longitud do begin
+  t:=i; s:='';
+    if caracteres[i] = subCad[1] then begin
+       for k := 1 to length(subCad) do begin
+           s:= s+caracteres[t]; inc(t);
+       end;
+       if s = subCad then
+          inc(c);
+    end;
+  inc(i);
+ end;
+ result:=c;
+end;
+
+procedure Cadenas.convPosChar(var i: word);
+var
+   h,k: word; s: string;
+begin
+ h:=1;
+  for k := 1 to I do
+     s:= nextPalabra(h);
+ i:= h-length(s);
+end;
+
+procedure Cadenas.ConvPosStr(var i: word);
+var
+   p: word; c:byte;
+begin
+ p:= 1; c:=0;
+ while p <= i do begin
+    nextPalabra(p); inc(c);
+ end;
+ i:= c;
+end;
+
+procedure Cadenas.InserChar(c: char; p: byte);
+var
+   i: word;
+begin
+ if (p>0) then begin
+  inc(Longitud);
+    for I := Longitud downto p+1 do
+        caracteres[i]:= Caracteres[i-1];
+  Caracteres[p]:= c;
+ End Else raise Exception.Create('posicion invalida');
+end;
+
+procedure Cadenas.InsertStr(p: word; s: string);
+var
+   i: word; c: char;
+begin
+ if (p>0) then begin
+  for I := 1 to length(s) do begin
+     c:= caracteres[p]; caracteres[p]:= s[i];
+     inc(p); inserChar(c, P);
+  end;
+ end Else raise Exception.Create('Posicion invalida');
+end;
+
+function Cadenas.IntTsimb(i: byte): char;
+var
+   c: char;
+begin
+  if (i>=10)and(i<=15) then
+     c:= chr(i+55)
+  else if (i>=0)and(i<=9) then
+     c:= chr(i+48);
+ result:= c;
+end;
+
+procedure Cadenas.InvCadena;
+var
+   I, varAux: word; c: char;
+begin
+ i:= 1; varAux:= longitud;
+  while i < varAux do begin
+    c:= caracteres[i];
+    caracteres[i]:= caracteres[varAux];
+    caracteres[varAux]:= c;
+    inc(i); varAux:= varAux -1;
+  end;
+end;
+
+procedure Cadenas.InvertirCadena;
+var i,p, k: word;  s: string;
+begin
+ i:= 1;
+ while i<longitud do begin
+    s:= NextPalabra(i);
+    invertirPalabra(s); p:= i-length(s);
+    for k := 1 to length(s) do begin
+        caracteres[p]:= s[k];  inc(p);
+    end;
+ end;
+end;
+procedure Cadenas.InvertirPalabra(var s: string);
+begin
+
+end;
+
+function Cadenas.LengLongitud: word;
+begin
+ Result:= longitud;
+end;
+
+procedure Cadenas.ModChar(p: word; c: char);
+begin
+ if (p>0)and(p<=longitud) then begin
+    caracteres[p]:= c;
+ end Else raise Exception.Create('posicion invalida');
+end;
+
+procedure Cadenas.ModStr(p: word; palabra: string);
+var
+   i: word; s: string;
+begin
+ s:= nextPalabra(p);
+ DeleteStr(p - length(s), length(s));
+ insertStr(p - length(s), palabra);
+end;
+
+procedure Cadenas.MoverPalabra(p1, p2: word);
+var
+   palabra2, palabra1: string;
+begin
+ palabra1:= NextPalabra(p1); palabra2:= NextPalabra(p2);
+ modStr(p2 - length(palabra2), palabra1);
+ modStr(p1 - length(palabra1), palabra2);
+end;
+
+procedure Cadenas.MoverPalabra2(p1, p2: word);
+var
+   palabra1, palabra2: string; aux: word;
+begin
+ if p1 > p2 then begin
+   aux:= p1; p1:= p2; p2:= aux;
+ end;
+ if ((p1>0)and (p2>0))and((p1<=CountPalabras)and(p2<=CountPalabras)) then begin
+   convPosChar(p1); convPosChar(p2);
+   palabra1:= NextPalabra(p1); palabra2:= NextPalabra(p2);
+   modStr(p2 - length(palabra2), palabra1);
+   modStr(p1 - length(palabra1), palabra2);
+ end Else raise Exception.Create('Posicion invalida');
+end;
+
+function Cadenas.NextCadena(var i: word; s: string): string;
+var
+   str: string;
+begin
+  while (i<= length(s)) and (s[i] in separador) do
+         inc(i);
+ str:='';
+  while (I<= length(s)) and (not(s[i] in separador)) do begin
+    str:= str + s[i];
+    inc(i);
+  end;
+ result:= str;
+end;
+
+function Cadenas.NextPalabra(var i: word): string;
+var
+   s: string;
+begin
+  while (i<= longitud) and (caracteres[i] in separador) do
+         inc(i);
+ s:='';
+  while (I<= longitud) and (not(caracteres[i] in separador)) do begin
+    s:= s + caracteres[i];
+    inc(i);
+  end;
+ result:= s;
+end;
+
+procedure Cadenas.OrdenAlfabetico;
+var
+   i, p:word; palabra: string;
+begin
+ i:= 1; p:= 1;
+ while (i<=longitud) do begin
+   saltarEspacios(p);
+   palabra:= NextPalabra(I);
+    while Length(Palabra)>0 do begin
+      caracteres[p]:= CharAlfabetico(palabra); inc(p);
+    end;
+ end;
+end;
+
+procedure Cadenas.OrdenStrAlfabetico;
+var i, posPal, p:word; cadena, s, c: string;
+begin
+ OrdenAlfabetico; c:='z';
+ for I := 1 to CountPalabras do begin
+   posPal:=i; convPosChar(posPal);
+    while posPal<=longitud do begin
+        s:= NextPalabra(posPal);
+         if caracteres[posPal-length(S)]<=c[1] then begin
+            c:= s; p:= posPal-length(s);
+         end;
+    end;
+   convPosStr(p);
+   MoverPalabra2(I,p); c:= 'z';
+ End;
+end;
+
+function Cadenas.PalabraMayor: string;
+var
+   i: word;
+   palabra, newPalabra: string;
+begin
+ i:=1; palabra:='';
+ while i<=Longitud do begin
+  newPalabra:=NextPalabra(i);
+   if length(newPalabra)> length(Palabra) then
+      palabra:= NewPalabra;
+ end;
+ result:= palabra;
+end;
+
+procedure Cadenas.QuedarseConNcadenas(c: char);
+var
+   s: string; i, t: word;
+begin
+ i:=1;
+ while i<longitud do begin
+   s:= NextPalabra(I);
+   if not ExisteChar(c, s) then begin
+      DeleteStr(i-length(s),length(s));
+      i:= i-length(s);
+   end;
+ end;
+ end;
+
+procedure Cadenas.SaltarEspacios(var i: word);
+begin
+  while (i<= longitud) and (caracteres[i] in separador) do
+         inc(i);
+end;
+
+function Cadenas.SimbIntT(c: char): byte;
+var
+    i: byte;
+begin
+ if (c>='A') and (c<= 'F') then
+     i:= ord(c)-55
+ else if (c>='0') and (c<='9') then
+     i:= ord(c)-48;
+ result:=i;
+end;
+
+
+function Cadenas.SumaBase(s1, s2: string; base: byte): string;
+var i, f, suma, ac: byte; resultado: string;
+begin
+ if length(s1)<length(s2) then
+    while length(s1)<>length(s2) do
+        s1:='0'+s1
+ else if length(s2)<length(s1) then
+    while length(s2)<>length(s1) do
+        s2:= '0'+s2;
+ i:= length(S1); f:= length(S2); resultado:=''; ac:=0;
+  while i>0 do begin
+      suma:= simbIntT(s1[i])+simbIntT(s2[f])+ac;
+       if suma >= base then begin
+          suma:= suma - base; ac:=1;
+       end else begin
+          ac:=0;
+       end;
+     resultado:= IntTsimb(suma) + resultado;
+     dec(i); dec(f);
+  end;
+ if ac=1 then
+    resultado:= '1'+resultado;
+ result:= resultado;
+end;
+
+function Cadenas.SumaNveces(base: byte): string;
+var i: word; s, resultado: string;
+begin
+ resultado:='0'; i:=1;
+  while i<=longitud do begin
+    s:= Nextpalabra(i);
+    resultado:= sumaBase(s,resultado,base);
+  end;
+ result:= resultado;
+end;
+
+function Cadenas.SumaReales(NumDecimal: byte): string;
+var suma: real; i: word; resultado: string;
+begin
+ suma:=0; i:=1;
+ while i < longitud do
+    suma:= strTofloat(nextPalabra(i))+suma;
+ if NumDecimal<>0 then begin
+   resultado:= FloatToStr(suma); i:=1;
+   while resultado[i]<>',' do
+         inc(i);
+   while NumDecimal>0 do begin
+         inc(i); dec(numDecimal);
+   end;
+   delete(resultado, i+1,length(resultado)-i);
+ end else begin
+   resultado:= IntTostr(Trunc(suma));
+ end;
+ result:= resultado;
+end;
+
+procedure Cadenas.upperCase;
+var
+  I: word;
+begin
+     for I := 1 to Longitud do
+       if Caracteres[i] in ['a'..'z'] then
+          Caracteres[i]:=Chr(ord(Caracteres[i])-32);
+end;
+
+procedure Cadenas.lowerCase;
+var
+  I: word;
+begin
+     for I := 1 to Longitud do
+       if Caracteres[i] in ['A'..'Z'] then
+          Caracteres[i]:=Chr(ord(Caracteres[i])+32);
+end;
+
+end.

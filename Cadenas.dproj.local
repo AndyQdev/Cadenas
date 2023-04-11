@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2022/04/10 18:08:46.000.241,=D:\Proyectos delphi\Unit1.pas</Transaction>
+    <Transaction>2022/09/14 13:23:19.000.413,=D:\Proyectos delphi\Unit1.pas</Transaction>
+    <Transaction>2022/10/02 00:30:43.000.103,=D:\Proyectos delphi\Unit1.pas</Transaction>
+    <Transaction>2022/10/02 00:30:55.000.854,=D:\Proyectos delphi\Unit2.pas</Transaction>
+    <Transaction>2022/10/02 00:38:39.000.744,D:\Universidad\Clases\Programacion 1\CODIGO ANDRES\Clase Cadenas\FormCadenas.dfm=D:\Proyectos delphi\Unit1.dfm</Transaction>
+    <Transaction>2022/10/02 00:38:39.000.744,D:\Universidad\Clases\Programacion 1\CODIGO ANDRES\Clase Cadenas\FormCadenas.pas=D:\Proyectos delphi\Unit1.pas</Transaction>
+    <Transaction>2022/10/02 00:38:46.000.929,D:\Universidad\Clases\Programacion 1\CODIGO ANDRES\Clase Cadenas\UCcadenas.pas=D:\Proyectos delphi\Unit2.pas</Transaction>
+    <Transaction>2022/10/02 00:38:51.000.565,D:\Universidad\Clases\Programacion 1\CODIGO ANDRES\Clase Cadenas\Cadenas.dproj=D:\Proyectos delphi\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
